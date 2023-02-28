@@ -1,9 +1,11 @@
 import {useState} from 'react';
+import SpotifyCreatePlaylist from './SpotifyCreatePlaylist';
+import './spotifyStyles.scss'
 
 const SpotifySearch = ({token}) =>{
-    const [searchKey, setSearchKey] = useState("")
-    const [tracks, setTracks] = useState([])
-    const [savedTracks, setSaveTrack] = useState({})
+    const [searchKey, setSearchKey] = useState("");
+    const [tracks, setTracks] = useState([]);
+    const [savedTracks, setSaveTrack] = useState({});
     const searchTracks = () => fetch('https://api.spotify.com/v1/search'+ '?' + new URLSearchParams({
             q: searchKey,
             type: "track"
@@ -27,25 +29,41 @@ const SpotifySearch = ({token}) =>{
         setSaveTrack({...savedTracks});
     }
 
+    
+    const removeTrack = (event) =>{
+        let trackid = event.target.getAttribute('trackId');
+        delete savedTracks[trackid];
+        setSaveTrack({...savedTracks});
+    }
+
     const renderTracks = () => {
-        console.log(savedTracks)
-        return tracks.map(track => (
-            <div key={track.id}>
+        return tracks.map((track,i) => (
+            <div id="searchTracksReturn" key={`tracks_${track.id}_${i}`}>
                 {track.name}
-                {track.artists.map((artist)=>{
-                    return <span> - {artist.name} </span>
-                })}
-                <button trackid={track.id} track={JSON.stringify(track)} onClick={savetrack}>Save Track</button>
+                <div>
+                    {track.artists.map((artist, i)=>{
+                        return <span key={`tracks_artist_${track.id}_${i}`}> - {artist.name} </span>
+                    })}
+                </div>
+                {savedTracks[track.id] ? <button trackid={track.id} onClick={removeTrack}>Remove Track</button> : <button trackid={track.id} track={JSON.stringify(track)} onClick={savetrack}>Save Track</button>}
             </div>
         ))
     }
     return(
         <>
-           <form onSubmit={searchTracks}>
-                <input type="text" onChange={e => setSearchKey(e.target.value)}/>
-                <button type={"submit"}>Search</button>
-            </form>
-            {renderTracks()}
+            <div id="searchBody">
+                <div id="searchTracks">
+                    <form onSubmit={searchTracks}>
+                        <input type="text" onChange={e => setSearchKey(e.target.value)}/>
+                        <button type={"submit"}>Search</button>
+                    </form>
+                    {renderTracks()}
+                </div>
+                <br></br>
+                <div id="createPlaylist">
+                    <SpotifyCreatePlaylist tracks={savedTracks} removeTrack = {removeTrack}/>
+                </div>
+            </div>
         </>
     )
 }
