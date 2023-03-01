@@ -1,4 +1,12 @@
-# Getting Started with Create React App
+# Spotify Efficient Playlist Maker
+
+- Search for songs
+- Add songs to playlist
+- Generate playlist in your spotify account
+- Utilizes Spotify Single sign in
+- IT IS FAST
+
+- Made with React
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
