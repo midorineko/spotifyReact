@@ -36,13 +36,22 @@ const SpotifySearch = ({token}) =>{
         setSaveTrack({...savedTracks});
     }
 
+    const searchForm = () =>{
+        return (
+            <form onSubmit={searchTracks}>
+                <input type="text" onChange={e => setSearchKey(e.target.value)}/>
+                <button type={"submit"}>Search</button>
+            </form>
+        )
+    }    
+
     const renderTracks = () => {
         return tracks.map((track,i) => (
             <div id="searchTracksReturn" key={`tracks_${track.id}_${i}`}>
                 {track.name}
                 <div>
                     {track.artists.map((artist, i)=>{
-                        return <span key={`tracks_artist_${track.id}_${i}`}> - {artist.name} </span>
+                        return <span key={`tracks_artist_${track.id}_${i}`}> - {track.artists[0].name} </span>
                     })}
                 </div>
                 {savedTracks[track.id] ? <button trackid={track.id} onClick={removeTrack}>Remove Track</button> : <button trackid={track.id} track={JSON.stringify(track)} onClick={savetrack}>Save Track</button>}
@@ -53,15 +62,12 @@ const SpotifySearch = ({token}) =>{
         <>
             <div id="searchBody">
                 <div id="searchTracks">
-                    <form onSubmit={searchTracks}>
-                        <input type="text" onChange={e => setSearchKey(e.target.value)}/>
-                        <button type={"submit"}>Search</button>
-                    </form>
+                    {searchForm()}
                     {renderTracks()}
                 </div>
                 <br></br>
                 <div id="createPlaylist">
-                    <SpotifyCreatePlaylist tracks={savedTracks} removeTrack = {removeTrack}/>
+                    <SpotifyCreatePlaylist token={token} tracks={savedTracks} removeTrack = {removeTrack}/>
                 </div>
             </div>
         </>
